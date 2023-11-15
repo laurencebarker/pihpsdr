@@ -19,9 +19,6 @@ SCRIPTFILE=`realpath $0`
 THISDIR=`dirname $SCRIPTFILE`
 TARGET=`dirname $THISDIR`
 
-sudo rm -f /usr/local/bin/pihpsdr
-sudo rm -f /usr/local/lib/libwdsp.so
-
 ################################################################
 #
 # b) install lots of packages
@@ -81,21 +78,7 @@ sudo apt-get install --yes librtlsdr-dev
 
 ################################################################
 #
-# c) download and install WDSP
-#
-################################################################
-cd $THISDIR
-yes | rm -r wdsp
-git clone https://github.com/dl1ycf/wdsp
-
-cd $THISDIR/wdsp
-make -j 4
-sudo make install
-sudo ldconfig
-
-################################################################
-#
-# d) download and install SoapySDR core
+# c) download and install SoapySDR core
 #
 ################################################################
 
@@ -113,7 +96,7 @@ sudo ldconfig
 
 ################################################################
 #
-# e) download and install libiio
+# d) download and install libiio
 #    NOTE: libiio has just changed the API and SoapyPlutoSDR
 #          is not yet updated. So compile version 0.25, which
 #          is the last one with the old API
@@ -137,7 +120,7 @@ sudo ldconfig
 
 ################################################################
 #
-# f) download and install Soapy for Adalm Pluto
+# e) download and install Soapy for Adalm Pluto
 #
 ################################################################
 
@@ -155,7 +138,7 @@ sudo ldconfig
 
 ################################################################
 #
-# g) download and install Soapy for RTL sticks
+# f) download and install Soapy for RTL sticks
 #
 ################################################################
 
@@ -173,7 +156,7 @@ sudo ldconfig
 
 ################################################################
 #
-# h) create desktop icons, start scripts, etc.  for pihpsdr
+# g) create desktop icons, start scripts, etc.  for pihpsdr
 #
 ################################################################
 
@@ -207,7 +190,7 @@ cp $TARGET/release/pihpsdr/hpsdr_icon.png $TARGET
 
 ################################################################
 #
-# i) default GPIO lines to input + pullup
+# h) default GPIO lines to input + pullup
 #
 ################################################################
 

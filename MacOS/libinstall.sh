@@ -141,16 +141,3 @@ $BREW install pothosware/pothos/soapyrtlsdr
 ################################################################
 $BREW analytics off
 
-################################################################
-#
-# d) download and install WDSP
-#
-################################################################
-cd $THISDIR
-yes | rm -r wdsp
-git clone https://github.com/dl1ycf/wdsp
-
-cd $THISDIR/wdsp
-make -j 4
-make install
-

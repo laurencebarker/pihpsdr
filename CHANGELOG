@@ -4,6 +4,17 @@ LIST OF RECENT PIHPSDR CHANGES
 November 2023:
 --------------
 
+- integrated the WDSP source code tree into piHPSDR,
+  and do a static linking against WDSP. This way,
+  the files /usr/local/include/wdsp.h and
+  /usr/local/lib/libwdsp.so (MacOS: libwdsp.dylib) are
+  no longer used and no longer referenced (except
+  when compiling with the EXTNR compile time option).
+
+- Corrections for legacy USB/OZY radios to work with
+  two Mercury cards (contribution from Rick). I took the
+  occasionto "polish" the OZY code somewhat.
+
 - re-worked the "analog input lines" from the radio.
   The "Display Warnings" checkbox now applies to
   sequence errors, TX fifo under/over-runs, and high SWR.
@@ -14,6 +25,8 @@ November 2023:
 - added PTTOUT and CWOUT to the "extra GPIO lines",
   and wrote an Appendix G in the manual to cover
   that subject.
+
+- increase number of memory slots from  5 to 10.
 
 - added 6.25k anhd 12.5 to the VFO step sizes
 

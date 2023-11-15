@@ -25,19 +25,15 @@ TARGET=$HOME/pihpsdr.release
 #
 # b) remove files to be replaced.
 #
-#    /usr/local/bin/pihpsdr might be a left-over from previous
-#    installations
-#
 ################################################################
 
-sudo rm -f /usr/local/bin/pihpsdr
-sudo rm -f /usr/local/lib/libwdsp.so
 rm -f $HOME/Desktop/pihpsdr.desktop
 rm -f $HOME/.local/share/applications/pihpsdr.desktop
 
 ################################################################
 #
 # c) install possibly missing OS packages
+#    (REQUIRES ADMIN PRIVILEGES)
 #
 ################################################################
 
@@ -103,20 +99,18 @@ cp $TARGET/pihpsdr.desktop $HOME/.local/share/applications
 
 ################################################################
 #
-# g) copy pihpsdr executable, WDSP shared library, and
-#    HPSDR icons to $TARGET
+# g) copy pihpsdr executable and HPSDR icons to $TARGET
 #
 ################################################################
-echo Copying executable, shared lib and icons
+echo Copying executable and icons
 cp $THISDIR/pihpsdr $TARGET
 cp $THISDIR/hpsdr.png $TARGET
 cp $THISDIR/hpsdr_icon.png $TARGET
-sudo cp $THISDIR/libwdsp.so /usr/local/lib
-sudo ldconfig
 
 ################################################################
 #
-# h) copy XDMA rules
+# h) copy XDMA rules (only for SATURN/G2)
+#    (REQUIRES ADMIN PRIVILEGES)
 #
 ################################################################
 echo "copying XDMA udev rules"
@@ -130,6 +124,7 @@ sudo udevadm trigger
 #    I guess this is obsolete since newer version of libgpiod
 #    should be able to correctly work on the Pi4,
 #    on the other hand, this can do little harm
+#    (REQUIRES ADMIN PRIVILEGES)
 #
 ################################################################
 if test -f "/boot/config.txt"; then

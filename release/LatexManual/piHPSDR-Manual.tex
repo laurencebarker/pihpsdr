@@ -5031,8 +5031,8 @@ Depending on the internet speed (and the speed of your SD card or hard disk), th
 last command my take some time. The first command loads the complete piHPSDR repository from
 my github accound. The last command (\texttt{libinstall.sh}) contains all the magic,
 it not only loads all required RaspberryPi OS packages,
-but also loads and installs further libraries piHPSDR depends on, such as the WDSP library,
-and the SoapySDR library as well as SoapySDR modules for the Adalm Pluto and RTL SDR sticks.
+but also loads and installs further libraries piHPSDR depends on, 
+including the SoapySDR library as well as SoapySDR modules for the Adalm Pluto and RTL SDR sticks.
 
 \textbf{Note.} The SoapySDR library, and all SoapySDR modules, must be compiled from the sources
 (and the libinstall.sh script does so). The reason is, that SoapySDR in the standard repository
@@ -5050,19 +5050,18 @@ first, as described in Appendix \ref{sec:compiletime}.
 It is clear that double-clicking the piHPSDR desktop icon at this stage leads nowhere,
 since first you need to compile the program.
 However,
-this is simply done by the three commands
+this is simply done by the two commands
 
 \grtt{cd \$HOME/pihpsdr} \\
-\grtt{make clean} \\
 \grtt{make}
 
-and that't it! The first  two commands are even not necessary (since you are in the pihpsdr
-directory at that point, and since there is nothing to be cleaned up).
+and that't it! The first command is even not necessary (since you are in the pihpsdr
+directory at that point).
 But if you make changes (e.g. changing the compile time options as described in
 Appendix \ref{sec:compiletime}, or apply some code modifications)
 and want to re-compile later, this sequence is the safest way to create a new binary,
 namely go to the pihpsdr
-directory, clean up, and recompile.
+directory and recompile by executing ,,make''.
 
 At this stage, double-clicking the piHPSDR desktop icon should start the program. See
 the end of Appendix \ref{sec:installbinary} how to get rid of a window popping up
@@ -5215,9 +5214,8 @@ installed, which you can safely ignore. Then, the
 Do not worry if \texttt{HomeBrew} was already installed on your computer, the installation
 procedure works in this case as well and does no harm. In addition to
  the \texttt{HomeBrew} core, additional libraries that piHPSDR depends on (e.g. GTK+3), the SoapySDR
- core and SoapySDR modules for several radios are installed. The WDSP library is also downloaded,
- compiled, and stored as \texttt{/usr/local/lib/libwdsp.dylib}.
-
+ core and SoapySDR modules for several radios are installed. 
+ 
  In case something went wrong, or simply to check that \texttt{HomeBrew} has been correctly installed,
  open a \textit{new} terminal window and type the command
 
@@ -5286,15 +5284,14 @@ do not apply and are automatically deactivated. Without changing the compile tim
 options (see Appendix \ref{sec:compiletime}) the MIDI option is the only one you get
 on MacOS.
 
-Compiling the program then only requires three commands
+Compiling the program then only requires two commands
 
 \grtt{cd \$HOME/pihpsdr} \\
-\grtt{make clean} \\
 \grtt{make app}
 
-and that't it! The first  two commands are even not necessary at this point,
+and that't it! The first command are even not necessary at this point,
 since you are in the pihpsdr
-directory at that point, and since there is nothing to be cleaned up.
+directory at that point.
 But if you make changes in the future (e.g. changing the compile time options as described in
 Appendix \ref{sec:compiletime}, or apply some code modifications)
 and want to re-compile later, this sequence of commands is the safest way to create a new binary.
@@ -5316,10 +5313,10 @@ home directory, to the Desktop, this can also be accomplished with the additiona
 \end{center}
 On Mac computers with Intel processors, \texttt{HomeBrew} is installed in \texttt{/usr/local},
 while on Mac computers with Silicon (M1, M2, M2 pro) processors, it is installed in
-\texttt{/opt/homebrew}. However, the WDSP library is not aware of this and installs its
-library and include file as \texttt{/usr/local/lib/libwdsp.dylib} and
-\texttt{/usr/local/include/wdsp.h}. There is nothing wrong with this, but on a Silicon
-Mac \texttt{/usr/local} may not contain any sub-directories. Therefore, the installation
+\texttt{/opt/homebrew}. 
+There is nothing wrong with this, except that some compilers in their default setup
+look for files in /usr/local but not in /opt/homebrew.
+Therefore, the installation
 procedure, after completing the \texttt{HomeBrew} installation, looks whether
  certain directories exist in \texttt{/usr/local} and, if not, places symbolic links
 there that point to
@@ -5328,9 +5325,9 @@ there that point to
 \texttt{/usr/local/include} $\quad\to\quad$ \texttt{/opt/homebrew/include} \\
 \texttt{/usr/local/bin\ \ \ \ } $\quad\to\quad$ \texttt{/opt/homebrew/bin} \\
 
-This also solves many problems with compiling packages, since the directories
-in /usr/local are usually in the standard compiler search paths, while
-/opt/homebrew is not.
+Meanwhile, the WDSP library is integrated into the piHPSDR source code tree,
+so this may no longer be necessary for installing piHPSDR, but is probably
+helpful for other projects.
 }
 }
 \end{center}
