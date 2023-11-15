@@ -172,7 +172,7 @@ endif
 ifeq ($(EXTENDED_NR), ON)
 EXTNR_OPTIONS=-DEXTNR
 WDSP_INCLUDE=
-WDSP_LIBS="-lwdsp"
+WDSP_LIBS=-lwdsp
 endif
 
 ##############################################################################
@@ -617,7 +617,9 @@ src/zoompan.o
 $(PROGRAM):  $(OBJS) $(AUDIO_OBJS) $(USBOZY_OBJS) $(SOAPYSDR_OBJS) \
 		$(MIDI_OBJS) $(STEMLAB_OBJS) $(SERVER_OBJS) $(SATURN_OBJS)
 	$(COMPILE) -c -o src/version.o src/version.c
+ifneq (z$(WDSP_INCLUDE), z)
 	@make -C wdsp
+endif
 	$(LINK) -o $(PROGRAM) $(OBJS) $(AUDIO_OBJS) $(USBOZY_OBJS) $(SOAPYSDR_OBJS) \
 		$(MIDI_OBJS) $(STEMLAB_OBJS) $(SERVER_OBJS) $(SATURN_OBJS) $(LIBS)
 
@@ -763,7 +765,9 @@ DEPEND:
 .PHONY: app
 app:	$(OBJS) $(AUDIO_OBJS) $(USBOZY_OBJS)  $(SOAPYSDR_OBJS) \
 		$(MIDI_OBJS) $(STEMLAB_OBJS) $(SERVER_OBJS) $(SATURN_OBJS)
-	make -C wdsp
+ifneq (z$(WDSP_INCLUDE), z)
+	@make -C wdsp
+endif
 	$(LINK) -headerpad_max_install_names -o $(PROGRAM) $(OBJS) $(AUDIO_OBJS) $(USBOZY_OBJS)  \
 		$(SOAPYSDR_OBJS) $(MIDI_OBJS) $(STEMLAB_OBJS) $(SERVER_OBJS) $(SATURN_OBJS) \
 		$(LIBS) $(LDFLAGS)
