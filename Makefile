@@ -54,6 +54,9 @@ LINK+=-pthread
 
 PKG_CONFIG = pkg-config
 
+WDSP_INCLUDE=-I./wdsp
+WDSP_LIBS=wdsp/libwdsp.a `$(PKG_CONFIG) --libs fftw3`
+
 ##############################################################################
 #
 # Settings for optional features, to be requested by un-commenting lines above
@@ -161,11 +164,15 @@ endif
 ##############################################################################
 #
 # Add support for extended noise reduction, if requested
+# This implies that one compiles against a wdsp.h e.g. in /usr/local/include,
+# and links with a WDSP shared lib e.g. in /usr/local/lib
 #
 ##############################################################################
 
 ifeq ($(EXTENDED_NR), ON)
 EXTNR_OPTIONS=-DEXTNR
+WDSP_INCLUDE=
+WDSP_LIBS="-lwdsp"
 endif
 
 ##############################################################################
@@ -328,7 +335,7 @@ OPTIONS=$(MIDI_OPTIONS) $(USBOZY_OPTIONS) \
 	-D GIT_DATE='"$(GIT_DATE)"' -D GIT_VERSION='"$(GIT_VERSION)"' -D GIT_COMMIT='"$(GIT_COMMIT)"'
 
 INCLUDES=$(GTKINCLUDES)
-COMPILE=$(CC) $(CFLAGS) $(OPTIONS) $(INCLUDES)
+COMPILE=$(CC) $(CFLAGS) $(WDSP_INCLUDE) $(OPTIONS) $(INCLUDES)
 
 .c.o:
 	$(COMPILE) -c -o $@ $<
@@ -340,7 +347,7 @@ COMPILE=$(CC) $(CFLAGS) $(OPTIONS) $(INCLUDES)
 ##############################################################################
 
 LIBS=	$(LDFLAGS) $(AUDIO_LIBS) $(USBOZY_LIBS) $(GTKLIBS) $(GPIO_LIBS) $(SOAPYSDRLIBS) $(STEMLAB_LIBS) \
-	$(MIDI_LIBS) -lwdsp -lm $(SYSLIBS)
+	$(MIDI_LIBS) $(WDSP_LIBS) -lm $(SYSLIBS)
 
 ##############################################################################
 #
@@ -610,6 +617,7 @@ src/zoompan.o
 $(PROGRAM):  $(OBJS) $(AUDIO_OBJS) $(USBOZY_OBJS) $(SOAPYSDR_OBJS) \
 		$(MIDI_OBJS) $(STEMLAB_OBJS) $(SERVER_OBJS) $(SATURN_OBJS)
 	$(COMPILE) -c -o src/version.o src/version.c
+	@make -C wdsp
 	$(LINK) -o $(PROGRAM) $(OBJS) $(AUDIO_OBJS) $(USBOZY_OBJS) $(SOAPYSDR_OBJS) \
 		$(MIDI_OBJS) $(STEMLAB_OBJS) $(SERVER_OBJS) $(SATURN_OBJS) $(LIBS)
 
@@ -647,10 +655,11 @@ cppcheck:
 
 .PHONY:	clean
 clean:
-	-rm -f src/*.o
-	-rm -f $(PROGRAM) hpsdrsim bootloader
-	-rm -rf $(PROGRAM).app
-	-make -C release/LatexManual clean
+	rm -f src/*.o
+	rm -f $(PROGRAM) hpsdrsim bootloader
+	rm -rf $(PROGRAM).app
+	@make -C release/LatexManual clean
+	@make -C wdsp clean
 
 #############################################################################
 #
@@ -663,7 +672,6 @@ clean:
 release: $(PROGRAM)
 	make -C release/LatexManual release
 	cp $(PROGRAM) release/pihpsdr
-	cp /usr/local/lib/libwdsp.so release/pihpsdr
 	cd release; tar cvf pihpsdr.tar pihpsdr
 	cd release; tar cvf pihpsdr-$(GIT_VERSION).tar pihpsdr
 
@@ -748,13 +756,14 @@ DEPEND:
 #
 #       No libraries are included in the app bundle, so it will only run
 #       on the computer where it was created, and on other computers which
-#       have all libraries (including WDSP) and possibly the SoapySDR support
+#       have all librariesand possibly the SoapySDR support
 #       modules installed.
 #############################################################################
 
 .PHONY: app
 app:	$(OBJS) $(AUDIO_OBJS) $(USBOZY_OBJS)  $(SOAPYSDR_OBJS) \
 		$(MIDI_OBJS) $(STEMLAB_OBJS) $(SERVER_OBJS) $(SATURN_OBJS)
+	make -C wdsp
 	$(LINK) -headerpad_max_install_names -o $(PROGRAM) $(OBJS) $(AUDIO_OBJS) $(USBOZY_OBJS)  \
 		$(SOAPYSDR_OBJS) $(MIDI_OBJS) $(STEMLAB_OBJS) $(SERVER_OBJS) $(SATURN_OBJS) \
 		$(LIBS) $(LDFLAGS)
