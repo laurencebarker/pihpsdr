@@ -4580,11 +4580,13 @@ Simply go (in a terminal window) to the directory where you compile piHPSDR and 
 
 \grtt{cp Makefile GNUmakefile}
 
+Then you can change the file GNUmakefile and recompile the program (see end of this section!).
 This ,,trick'' takes care the further compilations use the file \texttt{GNUmakefile} rather than
 \texttt{Makefile},
 and changing the compile time options is accomplished by changing the file \texttt{GNUmakefile} with a text
-editor. In principle, you could change the \texttt{Makefile} directly, but as soon as you  modify
-one of the files in the repository, the qualifier \texttt{-dirty} will be appended to the version number,
+editor. This procedure takes care that the file \texttt{Makefile} is left unchanged,
+ which is important because as soon as you  modify
+one of the files in the repository, the qualifier ,,\texttt{-dirty}'' will be appended to the version number,
 and this is  not what you want if you have not made a real change.
 In the file \texttt{GNUmakefile} at the beginning, you will find a lot of assignments of the form
 
@@ -4635,14 +4637,20 @@ and then start piHPSDR. With the STEMLAB option, this can all be done by piHPSDR
 On Linux systems (including the Raspberry PI), if setting the value to \texttt{ALSA},
 the standard Linux ALSA sound library is used for local audio
 output and local microphone input. In all other cases
-PulseAudio is used. On MacOS, the \texttt{AUDIO} choice has no effect since only the
-PortAudio module works well.
+PulseAudio is used. On MacOS, the \texttt{AUDIO} choice has no effect since the PortAudio
+module is used no matter what the \texttt{AUDIO} setting is.
 
 \rett{EXTENDED\_NR}. (default: disabled)
 There is a special version of the WDSP library that contains additional noise
 reduction facilities which are based on  \texttt{rnnnoise} and \texttt{libspecbleach}, see
  \texttt{https://github.com/vu3rdd/wdsp}. If you have such a version of WDSP installed, these
  extended noise reduction facilities can be used with piHPSDR if this option is \texttt{ON}.
+ Note that activating this option implies that the modified WDSP version is installed such
+ that the WDSP include file can be found by the compiler, and that the WDSP (shared)
+ library can be linked with the ,,\texttt{-lwdsp}'' linker option. This normally means
+ that the WDSP shared library is installed in /usr/local/lib, while the WDSP header file
+ is installed in /usr/local/include. The \texttt{wdsp} directory which is part of
+ the piHPSDR repository is not used if \texttt{EXTENDED\_NR} is activated.
 
  \rett{SERVER}. (default: disabled)
  This is not yet completed but is mentioned here anyway. There are plans to have
@@ -4652,6 +4660,15 @@ reduction facilities which are based on  \texttt{rnnnoise} and \texttt{libspecbl
  between the ,,distant'' radio and the ,,distant'' computer using a straight internet
  cable connection, while the user interface data is exchanged between the two copies of
  piHPSDR running on the two computers.
+ 
+ After you have copied \texttt{Makefile} to \texttt{GNUmakefile} and modified the compile time
+ options, the two commands
+ 
+\grtt{make clean} \\
+\grtt{make}
+
+are necessary to re-compile the program. Do not forget the ,,\texttt{make clean}'', since 
+most of the files need be recompiled after the compile time options have changed!
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{GPIO Lines for Controllers, CW, PTT}
@@ -4820,7 +4837,12 @@ Do not change the buttons in the other lines, the need not be as shown here.
 
 \textit{This procedure has been tested on a Pi 4B, with a fresh and plain vanilla operating
 system (32-bit ,,BullsEye'', released May 3rd 2023, Kernel version 6.1) obtained from} \\
-\texttt{https://www.raspberrypi.com/software/operating-systems/}.
+\texttt{https://www.raspberrypi.com/software/operating-systems/} \\
+\textit{It also works with the current
+version (32-bit ,,BookWorm'', released Oct 10 2023, Kernel version 6.1). Although there are reports
+that piHPSDR does not work as smoothly with the new ,,WayLand'' window manager as it used to work
+with X11,
+I personally cannot confirm this.}
 
 
 
@@ -4953,7 +4975,12 @@ and the logo is there.
 \label{sec:installsources}
 \textit{This procedure has been tested on a Pi 4B, with a fresh and plain vanilla operating
 system (32-bit ,,BullsEye'', released May 3rd 2023, Kernel version 6.1) obtained from} \\
-\texttt{https://www.raspberrypi.com/software/operating-systems/}.
+\texttt{https://www.raspberrypi.com/software/operating-systems/} \\
+\textit{It also works with the current
+version (32-bit ,,BookWorm'', released Oct 10 2023, Kernel version 6.1). Although there are reports
+that piHPSDR does not work as smoothly with the new ,,WayLand'' window manager as it used to work
+with X11,
+I personally cannot confirm this.}
 
 Installation from the sources is the preferred way of installing piHPSDR, for the following reasons
 
@@ -5065,7 +5092,15 @@ directory and recompile by executing ,,make''.
 
 At this stage, double-clicking the piHPSDR desktop icon should start the program. See
 the end of Appendix \ref{sec:installbinary} how to get rid of a window popping up
-and asking you how to execute the program.
+and asking you how to execute the program. You have just compiled the program with 
+the default compile-time options (see Appendix \ref{sec:compiletime}), namely
+\texttt{MIDI}, \texttt{GPIO}, and \texttt{SATURN}, and with \texttt{PulseAudio}
+as audio module. If you want, for example, use SoapySDR hardware such as the AdalmPluto
+or RTL sticks, you have to enable \texttt{SOAPYSDR} and recompile as described in
+Appendix \ref{sec:compiletime}.
+
+If you do not plan to use SoapySDR devices, you need not compile with \texttt{SOAPYSDR}
+enabled and can skip the rest of this appendix.
 
 \textbf{Checking the SoapySDR installation.}
 The installation of the SoapySDR core and the modules for the Adalm Pluto and for RTL SDR
@@ -5076,7 +5111,7 @@ option, you can simply ignore this. To check the SoapySDR installation, open a n
 window and just type the command (be careful to use the correct capitalization!)
 
 \grtt{SoapySDRUtil -info}
-
+\clearpage
 On my test system, this command produced the following output:
 \begin{tiny}
 \begin{verbatim}
@@ -5229,8 +5264,9 @@ procedure works in this case as well and does no harm. In addition to
  command is found. This is the reason why you have to open a new terminal window to make this test,
  since in the originally opened window the update of the command search path is not yet effective.
 
- If you want to use SoapySDR, please check the Soapy installation. Open a new terminal window and simply
- type the command (be careful to use the correct capitalization!)
+If you want to use SoapySDR, please check the Soapy installation.
+Open a new terminal window and simply
+type the command (be careful to use the correct capitalization!)
 
 \grtt{SoapySDRUtil -info}
 
@@ -5321,6 +5357,7 @@ procedure, after completing the \texttt{HomeBrew} installation, looks whether
  certain directories exist in \texttt{/usr/local} and, if not, places symbolic links
 there that point to
 
+\vspace{0.5cm}
 \texttt{/usr/local/lib\ \ \ \ } $\quad\to\quad$ \texttt{/opt/homebrew/lib} \\
 \texttt{/usr/local/include} $\quad\to\quad$ \texttt{/opt/homebrew/include} \\
 \texttt{/usr/local/bin\ \ \ \ } $\quad\to\quad$ \texttt{/opt/homebrew/bin} \\
